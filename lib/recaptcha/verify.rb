@@ -26,18 +26,15 @@ module Recaptcha
         end
         answer, error = recaptcha.body.split.map { |s| s.chomp }
         unless answer == 'true'
-          flash[:recaptcha_error] = error
           if model
             model.valid?
             model.errors.add attribute, options[:message] || "Word verification response is incorrect, please try again."
           end
           return false
         else
-          flash[:recaptcha_error] = nil
           return true
         end
       rescue Timeout::Error 
-        flash[:recaptcha_error] = "recaptcha-not-reachable"
         if model
           model.valid?
           model.errors.add attribute, options[:message] || "Oops, we failed to validate your word verification response. Please try again."
